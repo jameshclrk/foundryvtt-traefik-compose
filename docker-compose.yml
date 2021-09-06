@@ -1,0 +1,43 @@
+---
+version: '3'
+secrets:
+  config_json:
+    file: secrets.json
+services:
+  foundryvtt:
+    image: felddy/foundryvtt:0.8.9
+    restart: "unless-stopped"
+    init: true
+    volumes:
+      - type: bind
+        source: ./vtt-data
+        target: /data
+    environment:
+      - CONTAINER_CACHE=/data/cache
+      - CONTAINER_PRESERVE_CONFIG=false
+      - FOUNDRY_GID=1000
+      - FOUNDRY_UID=1000
+      - FOUNDRY_MINIFY_STATIC_FILES=true
+      - FOUNDRY_HOSTNAME=CHANGEME.HOSTNAME
+      - FOUNDRY_ROUTE_PREFIX=foundry
+      - FOUNDRY_PROXY_SSL=true
+      - FOUNDRY_PROXY_PORT=443
+    secrets:
+      - source: config_json
+        target: config.json
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.backend=foundryvtt
+      - traefik.docker.network=web
+      - traefik.http.services.foundryvtt.loadbalancer.server.port=30000
+      # Creates a router that listens on the https entrypoint
+      - traefik.http.routers.foundryvtt-ssl.entryPoints=https
+      - "traefik.http.routers.foundryvtt-ssl.rule=Host(`CHANGEME.HOSTNAME`) && PathPrefix(`/foundry`)"
+      # Enables TLS on this router
+      - traefik.http.routers.foundryvtt-ssl.tls=true
+      - traefik.http.routers.foundryvtt-ssl.tls.certResolver=le
+networks:
+  web:
+    external: true

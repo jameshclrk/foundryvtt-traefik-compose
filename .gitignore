@@ -1,0 +1,3 @@
+vtt-data/*
+!vtt-data/.gitkeep
+secrets.json
