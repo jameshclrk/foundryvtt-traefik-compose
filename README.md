@@ -13,6 +13,8 @@
 ## How to Run
 
 ```
+# Copy the download link from your license page
+$ ./build.sh https://.../...
 $ docker-compose up -d
 ```
 
