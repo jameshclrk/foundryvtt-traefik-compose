@@ -5,7 +5,7 @@ secrets:
     file: secrets.json
 services:
   foundryvtt:
-    image: felddy/foundryvtt:0.8.9
+    image: felddy/foundryvtt:9.226
     restart: "unless-stopped"
     init: true
     volumes:
